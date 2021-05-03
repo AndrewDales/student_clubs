@@ -26,7 +26,7 @@ def create_new_db():
 
 
 def populate_database(sess):
-    # Create some participants (random names used
+    # Create some participants (random names used)
     participants = [create_person("Elyse O'Connor"),
                     create_person("Dominique Peters"),
                     create_person("Joey Evans"),
