@@ -37,12 +37,12 @@ class Person(Base):
     __tablename__ = 'person'
     id = Column(Integer, primary_key=True)
     first_name = Column(String, nullable=False)
-    second_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
     activities = relationship("Activity",
                               secondary=person_activities,
                               back_populates="attendees")
 
     def __repr__(self):
-        return f"<Person({self.firt_name} {self.second_name})>"
+        return f"<Person({self.first_name} {self.last_name})>"
 
 
