@@ -39,44 +39,6 @@ class MainMenu(Menu):
     def __init__(self, callbacks):
         super().__init__()
         self.title = "Main Menu"
-        self.menu_options = {"Select person": callbacks["open_select_person"],
-                             "Select activity": callbacks["open_select_activity"],
-                             "Quit": None}
+        # Add self.menu_options
 
 
-class SelectPersonMenu(Menu):
-    def __init__(self, callbacks, data):
-        super().__init__()
-        self.person_data = data
-        person_callback = callbacks['open_person_menu']
-        self.title = "Select Person"
-        self.menu_options = {name: lambda i=name_id: person_callback(i)
-                             for name_id, name in data.items()}
-
-
-class SelectActivityMenu(Menu):
-    def __init__(self, callbacks, data):
-        super().__init__()
-        self.activity_data = data
-        activity_callback = callbacks['open_activity_menu']
-        self.title = "Select Activity"
-        self.menu_options = {activity: lambda i=activity_id: activity_callback(i)
-                             for activity_id, activity in data.items()}
-
-
-class PersonActivityMenu(Menu):
-    def __init__(self, callbacks, data):
-        super().__init__()
-        self.title = data["name"]
-        self.data = {'data_title': 'Activities', 'data_list': data["activities"]}
-        self.menu_options = {"Select new person": callbacks["open_select_person"],
-                             "Return to main menu": callbacks["open_main_menu"]}
-
-
-class ActivityRegisterMenu(Menu):
-    def __init__(self, callbacks, data):
-        super().__init__()
-        self.title = data["activity"]
-        self.data = {'data_title': 'Attendees', 'data_list': data["names"]}
-        self.menu_options = {"Select new activity": callbacks["open_select_activity"],
-                             "Return to main menu": callbacks["open_main_menu"]}

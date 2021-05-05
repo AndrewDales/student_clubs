@@ -12,6 +12,7 @@ from tk_sql_app.settings import ROOT_DIR
 from tk_sql_app.db.queries import create_person
 
 
+# Deletes the current database and creates a new one based on the table information in models.py (m)
 def create_new_db():
     print("Deleting current database and starting new")
 
@@ -69,4 +70,4 @@ if __name__ == "__main__":
     Session = create_new_db()
     with Session() as session:
         populate_database(session)
-    # session.close()
+
