@@ -78,3 +78,11 @@ class TestDbInteractions(unittest.TestCase):
                      2: 'Dominique Peters', 4: 'Tristan Rees', 5: 'Aiden Richards',
                      7: 'Dennis Thomson'}:
             self.assertIn(item, names_data)
+
+    def test_qry_activities(self):
+        activities_data = db.queries.qry_activities(self.session)
+        self.assertEqual(activities_data, {4: 'Boardgames', 8: 'Classics Society',
+                                           5: 'Lower School Politics',
+                                           1: 'Masaryk Society', 6: 'Mindfulness',
+                                           7: 'Origami', 3: 'Pride Society',
+                                           2: 'Rap Group', 9: 'VEX Robotics'})
