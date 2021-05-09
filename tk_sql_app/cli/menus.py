@@ -13,15 +13,19 @@ class Menu:
         print("_" * len(self.title) + "\n")
 
     def show_options(self):
-        print('Select from the following options:\n')
+        option_title = self.menu_options.get("option_title", "Select from the following options:")
+        print(f'{option_title}\n')
         for i, option in enumerate(self.menu_options["option_list"], 1):
             print(f'\t{i}\t{option[0]}')
 
     def select_option(self):
-        option = inputInt('\nChoose option number: ', min=1, max=len(self.menu_options["option_list"]) + 1)
-        callback = self.menu_options["option_list"][option-1][1]
+        option = inputInt(f'\nChoose option number: ', min=1, max=len(self.menu_options["option_list"]) + 1)
+        return option - 1
+
+    def run_callback(self, cb_number):
+        callback = self.menu_options["option_list"][cb_number][1]
         if callback:
-            callback()
+            return callback()
 
     def show_data(self):
         print(self.data['data_title'])
@@ -36,5 +40,8 @@ class Menu:
             self.show_data()
         if self.menu_options:
             self.show_options()
-            self.select_option()
+            call_back_option = self.select_option()
+            self.run_callback(call_back_option)
 
+    def __repr__(self):
+        return "\n".join([f"{i} {option[0]}" for i, option in enumerate(self.menu_options["option_list"], 1)])

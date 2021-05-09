@@ -1,6 +1,6 @@
 """ Module contains unittests for the db classes and functions"""
 
-# tk_sql_app/tests/__init__
+# tk_sql_app/tests/test_db
 
 import unittest
 
@@ -70,7 +70,7 @@ class TestDbInteractions(unittest.TestCase):
         activity_data = db.queries.qry_activities_register(self.session, 4)
         self.assertDictEqual(activity_data, {'activity': 'Boardgames',
                                              'id': 4,
-                                             'names': ['Dominique Peters', 'Adrian Pearce']})
+                                             'attendees': ['Dominique Peters', 'Adrian Pearce']})
 
     def test_qry_names(self):
         names_data = db.queries.qry_names(self.session)
