@@ -31,14 +31,16 @@ class TestCliApplication(TestDbInteractions):
         person_activities = self.test_app.callbacks["open_person_menu"](3)
         self.assertEqual(person_activities.title, "Adrian Pearce")
         self.assertEqual(str(person_activities),
-                         '1 Select new person\n2 Return to main menu')
+                         '1 Add new activity\n2 Select new person\n3 Return to main menu')
         self.assertDictEqual(person_activities.data,
-                             {'data_title': 'Activities', 'data_list': ['Lower School Politics', 'Boardgames']})
+                             {'data_title': 'Activities', 'data_list': ['Lower School Politics', 'Boardgames'],
+                              'person_id': 3})
 
     def test_activity_menu(self):
-        person_activities = self.test_app.callbacks["open_person_menu"](3)
-        self.assertEqual(person_activities.title, "Adrian Pearce")
-        self.assertEqual(str(person_activities),
-                         '1 Select new person\n2 Return to main menu')
-        self.assertDictEqual(person_activities.data,
-                             {'data_title': 'Activities', 'data_list': ['Lower School Politics', 'Boardgames']})
+        activity_attendess = self.test_app.callbacks["open_activity_menu"](3)
+        self.assertEqual(activity_attendess.title, "Pride Society")
+        self.assertEqual(str(activity_attendess),
+                         '1 Add new attendee\n2 Select new activity\n3 Return to main menu')
+        self.assertDictEqual(activity_attendess.data,
+                             {'data_title': 'Attendees', 'data_list': ["Elyse O'Connor", 'Ronald McDonald'],
+                              'activity_id': 3})

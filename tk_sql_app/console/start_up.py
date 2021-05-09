@@ -15,5 +15,5 @@ from tk_sql_app.cli.menus import Menu
 sql_path = pathlib.Path(ROOT_DIR).joinpath('var', 'db.sqlite')
 engine = create_engine(f'sqlite:///{pathlib.Path(sql_path)}', echo=True)
 Session = sessionmaker(bind=engine)
-test_app = CliApplication(echo=False, display=None)
+test_app = CliApplication(echo=False, interface="cli", display=None)
 main_menu = test_app.open_main_menu()

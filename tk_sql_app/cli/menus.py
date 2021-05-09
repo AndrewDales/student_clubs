@@ -7,6 +7,7 @@ class Menu:
         self.title = title
         self.data = data
         self.menu_options = menu_options
+        self.last_selected = None
 
     def show_title(self):
         print("\n" + self.title)
@@ -20,6 +21,7 @@ class Menu:
 
     def select_option(self):
         option = inputInt(f'\nChoose option number: ', min=1, max=len(self.menu_options["option_list"]) + 1)
+        self.last_selected = option - 1
         return option - 1
 
     def run_callback(self, cb_number):
@@ -36,7 +38,7 @@ class Menu:
     def display_menu(self):
         if self.title:
             self.show_title()
-        if self.data:
+        if self.data and "data_list" in self.data:
             self.show_data()
         if self.menu_options:
             self.show_options()

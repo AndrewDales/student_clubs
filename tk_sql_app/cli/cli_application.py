@@ -17,7 +17,8 @@ class CliApplication:
             'open_person_menu': self.open_person_menu,
             'open_activity_menu': self.open_activity_menu,
             'open_select_person': self.open_select_person,
-            'open_select_activity': self.open_select_activity
+            'open_select_activity': self.open_select_activity,
+            'add_person_activity': self.add_person_activity
         }
         self.interface = kwargs.get("interface", None)
         self.display = kwargs.get("display", True)
@@ -46,9 +47,11 @@ class CliApplication:
     def open_main_menu(self):
         title = "Main Menu"
         menu_options = {"option_list":
-                            [("Select person", self.callbacks["open_select_person"]),
-                             ("Select activity", self.callbacks["open_select_activity"]),
-                             ("Quit", None)]
+                        [("Select person", partial(self.callbacks["open_select_person"],
+                                                   self.callbacks["open_person_menu"])),
+                         ("Select activity", partial(self.callbacks["open_select_activity"],
+                                                     self.callbacks["open_activity_menu"])),
+                         ("Quit", None)]
                         }
         menu = {"title": title, "menu_options": menu_options}
         if self.interface == "cli":
@@ -56,27 +59,26 @@ class CliApplication:
         return menu
 
     def open_select_person(self, person_callback=None):
-        person_callback = person_callback or self.callbacks["open_person_menu"]
+        # person_callback = person_callback or self.callbacks["open_person_menu"]
         with self.session_scope() as session:
             name_data = queries.qry_names(session)
         title = "Select Person"
         menu_options = dict(option_title="Select one of the following people",
                             option_list=[(name, partial(person_callback, name_id))
-                                         for name_id, name in name_data.items()])
-        menu = {"title": title, "menu_options": menu_options}
+                                         for name_id, name in name_data])
+        menu = {"title": title, "menu_options": menu_options, "data": {"ref_data": name_data}}
         if self.interface == "cli":
             menu = self.create_cli_menu("select_person", menu)
         return menu
 
-    def open_select_activity(self, activity_callback=None):
-        activity_callback = activity_callback or self.callbacks["open_activity_menu"]
+    def open_select_activity(self, activity_callback=lambda i: None):
         with self.session_scope() as session:
             activity_data = queries.qry_activities(session)
         title = "Select Activity"
         menu_options = dict(option_title="Select one of the following activities",
                             option_list=[(activity, partial(activity_callback, activity_id))
-                                         for activity_id, activity in activity_data.items()])
-        menu = {"title": title, "menu_options": menu_options}
+                                         for activity_id, activity in activity_data])
+        menu = {"title": title, "menu_options": menu_options, "data": {"ref_data": activity_data}}
         if self.interface == "cli":
             menu = self.create_cli_menu("select_person", menu)
         return menu
@@ -88,8 +90,13 @@ class CliApplication:
                 person_data["activities"] = ["No activities"]
         title = person_data["name"]
 
-        data = {"data_title": "Activities", "data_list": person_data["activities"]}
-        menu_options = dict(option_list=[("Select new person", self.callbacks["open_select_person"]),
+        data = {"data_title": "Activities", "data_list": person_data["activities"],
+                "person_id": id_num}
+        menu_options = dict(option_list=[("Add new activity",
+                                          partial(self.callbacks["add_person_activity"],
+                                                  person_id=id_num,
+                                                  show_callback=partial(self.callbacks["open_person_menu"], id_num))),
+                                         ("Select new person", self.callbacks["open_select_person"]),
                                          ("Return to main menu", self.callbacks["open_main_menu"])])
         menu = {"title": title, "data": data, "menu_options": menu_options}
         if self.interface == "cli":
@@ -103,10 +110,31 @@ class CliApplication:
                 activity_data["attendees"] = ["No attendees"]
         title = activity_data["activity"]
 
-        data = {"data_title": "Attendees", "data_list": activity_data["attendees"]}
-        menu_options = dict(option_list=[("Select new activity", self.callbacks["open_select_activity"]),
+        data = {"data_title": "Attendees", "data_list": activity_data["attendees"],
+                "activity_id": id_num}
+        menu_options = dict(option_list=[("Add new attendee",
+                                          partial(self.callbacks["add_person_activity"],
+                                                  activity_id=id_num,
+                                                  show_callback=partial(self.callbacks["open_activity_menu"], id_num))),
+                                         ("Select new activity", self.callbacks["open_select_activity"]),
                                          ("Return to main menu", self.callbacks["open_main_menu"])])
         menu = {"title": title, "data": data, "menu_options": menu_options}
         if self.interface == "cli":
             menu = self.create_cli_menu("activity_register_menu", menu)
         return menu
+
+    def add_person_activity(self, person_id=None, activity_id=None, show_callback=None):
+        if not activity_id:
+            menu = self.callbacks["open_select_activity"]()
+            option = menu.last_selected
+            activity_id = menu.data["ref_data"][option][0]
+
+        if not person_id:
+            menu = self.callbacks["open_select_person"]()
+            option = menu.last_selected
+            person_id = menu.data["ref_data"][option][0]
+
+        with self.session_scope() as session:
+            queries.add_person_activity(session, person_id, activity_id)
+
+        show_callback()
