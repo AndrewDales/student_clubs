@@ -31,7 +31,7 @@ class TestCliApplication(TestDbInteractions):
         person_activities = self.test_app.callbacks["open_person_menu"](3)
         self.assertEqual(person_activities.title, "Adrian Pearce")
         self.assertEqual(str(person_activities),
-                         '1 Add new activity\n2 Select new person\n3 Return to main menu')
+                         '1 Select new person\n2 Return to main menu')
         self.assertDictEqual(person_activities.data,
                              {'data_title': 'Activities', 'data_list': ['Lower School Politics', 'Boardgames']})
 
