@@ -42,37 +42,33 @@ class CliApplication:
         return menu
 
     def open_main_menu(self):
-        title = "Main Menu"
-        menu_options = {"option_list":
-                        [("Select person", self.callbacks["open_select_person"]),
-                         ("Select activity", self.callbacks["open_select_activity"]),
-                         ("Quit", None)]
-                        }
-        menu = {"title": title, "menu_options": menu_options}
-        menu = self.create_cli_menu("main_menu", menu)
-        return menu
-
-    def open_select_person(self):
-        print("Running open_select_person ... ")
-        return "You opened the select person option"
+        pass
+        # Include the code for the main menu options here
 
     def open_person_menu(self, id_num):
         with self.session_scope() as session:
             person_data = queries.qry_person_activities(session, id_num)
-        title = person_data["name"]
-
-        data = {"data_title": "Activities", "data_list": person_data["activities"],
-                "person_id": id_num}
-        menu_options = dict(option_list=[("Add new activity", self.callbacks["open_select_activity"]),
-                                         ("Select new person", self.callbacks["open_select_person"]),
-                                         ("Return to main menu", self.callbacks["open_main_menu"])])
+        # Complete the application tier logic for the person_menu here
+        # ...
+        # ...
         menu = {"title": title, "data": data, "menu_options": menu_options}
         menu = self.create_cli_menu("person_activity_menu", menu)
         return menu
 
+    def open_activity_menu(self, id_num):
+        pass
+
+    # Complete the application tier logic for the activity_menu here
+    # ...
+    # ...
+
+    def open_select_person(self):
+        # This code is a place-holder
+        print("Running open_select_person ... ")
+        return "You opened the select person option"
+
     def open_select_activity(self):
+        # This code is a place-holder
         print("Running open_select_activity ... ")
         return "You opened the select activity option"
 
-    def open_activity_menu(self, id_num):
-        pass
