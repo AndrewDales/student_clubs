@@ -58,7 +58,7 @@ class CliApplication:
             menu = self.create_cli_menu("main_menu", menu)
         return menu
 
-    def open_select_person(self, person_callback=None):
+    def open_select_person(self, person_callback=lambda i: None):
         # person_callback = person_callback or self.callbacks["open_person_menu"]
         with self.session_scope() as session:
             name_data = queries.qry_names(session)
