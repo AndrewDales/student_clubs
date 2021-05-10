@@ -1,24 +1,35 @@
 """ Contains classes for CLI Menus"""
+from pyinputplus import inputInt
 
 
+# Menu class displays a CLI menu based on the title, data and options that are input to initialize the data
+# Callbacks are assigned to each menu item and can be run by selecting that data input
 class Menu:
-    def __init__(self):
-        self.title = None
-        self.data = None
-        self.menu_options = None
+    def __init__(self, title=None, data=None, menu_options=None):
+        self.title = title
+        self.data = data
+        self.menu_options = menu_options
+        self.last_selected = None
 
     def show_title(self):
         print("\n" + self.title)
         print("_" * len(self.title) + "\n")
 
     def show_options(self):
-        print('Select from the following options:\n')
-        for i, option in enumerate(self.menu_options, 1):
-            print(f'\t{i}\t{option}')
-        option = int(input('\nChoose option number: '))
-        callback = list(self.menu_options.values())[option-1]
+        option_title = self.menu_options.get("option_title", "Select from the following options:")
+        print(f'{option_title}\n')
+        for i, option in enumerate(self.menu_options["option_list"], 1):
+            print(f'\t{i}\t{option[0]}')
+
+    def select_option(self):
+        option = inputInt(f'\nChoose option number: ', min=1, max=len(self.menu_options["option_list"]) + 1)
+        self.last_selected = option - 1
+        return option - 1
+
+    def run_callback(self, cb_number):
+        callback = self.menu_options["option_list"][cb_number][1]
         if callback:
-            callback()
+            return callback()
 
     def show_data(self):
         print(self.data['data_title'])
@@ -29,16 +40,12 @@ class Menu:
     def display_menu(self):
         if self.title:
             self.show_title()
-        if self.data:
+        if self.data and "data_list" in self.data:
             self.show_data()
         if self.menu_options:
             self.show_options()
+            call_back_option = self.select_option()
+            self.run_callback(call_back_option)
 
-
-class MainMenu(Menu):
-    def __init__(self, callbacks):
-        super().__init__()
-        self.title = "Main Menu"
-        # Add self.menu_options
-
-
+    def __repr__(self):
+        return "\n".join([f"{i} {option[0]}" for i, option in enumerate(self.menu_options["option_list"], 1)])

@@ -70,4 +70,3 @@ if __name__ == "__main__":
     Session = create_new_db()
     with Session() as session:
         populate_database(session)
-

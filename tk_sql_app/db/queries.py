@@ -15,7 +15,7 @@ def create_person(name, last_name=None):
 # Query all the persons in the database
 def qry_names(session):
     qry = session.query(m.Person).order_by(m.Person.last_name, m.Person.first_name)
-    return {row.id: f'{row.first_name} {row.last_name}' for row in qry.all()}
+    return [(row.id, f'{row.first_name} {row.last_name}') for row in qry.all()]
 
 
 # Query all the activities in the database
