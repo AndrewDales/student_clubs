@@ -37,10 +37,10 @@ class TestCliApplication(TestDbInteractions):
                               'person_id': 3})
 
     def test_activity_menu(self):
-        activity_attendess = self.test_app.callbacks["open_activity_menu"](3)
-        self.assertEqual(activity_attendess.title, "Pride Society")
-        self.assertEqual(str(activity_attendess),
+        activity_attendees = self.test_app.callbacks["open_activity_menu"](3)
+        self.assertEqual(activity_attendees.title, "Pride Society")
+        self.assertEqual(str(activity_attendees),
                          '1 Add new attendee\n2 Select new activity\n3 Return to main menu')
-        self.assertDictEqual(activity_attendess.data,
+        self.assertDictEqual(activity_attendees.data,
                              {'data_title': 'Attendees', 'data_list': ["Elyse O'Connor", 'Ronald McDonald'],
                               'activity_id': 3})
