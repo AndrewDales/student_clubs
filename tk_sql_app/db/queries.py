@@ -40,6 +40,6 @@ def qry_activities_register(session, id_num):
 
 # Add a person_id, activity_id relationship to the person_activities table
 def add_person_activity(session, p_id, a_id):
-    stmt = insert(m.person_activities).values(person_id=p_id, activity_id=a_id)
+    stmt = insert(m.person_activity).values(person_id=p_id, activity_id=a_id)
     session.execute(stmt)
     session.commit()

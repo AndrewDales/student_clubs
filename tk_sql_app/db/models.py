@@ -14,13 +14,13 @@ Base = declarative_base()
 
 # Sets up a link table with activity_id and person_id as foreign keys
 # Base.metadata is a container object that keeps together many different features of the database
-person_activities = Table('person_activities',
-                          Base.metadata,
-                          Column('id', Integer, primary_key=True),
-                          Column('activity_id', ForeignKey('activity.id')),
-                          Column('person_id', ForeignKey('person.id')),
-                          UniqueConstraint('activity_id', 'person_id')
-                          )
+person_activity = Table('person_activity',
+                        Base.metadata,
+                        Column('id', Integer, primary_key=True),
+                        Column('activity_id', ForeignKey('activity.id')),
+                        Column('person_id', ForeignKey('person.id')),
+                        UniqueConstraint('activity_id', 'person_id')
+                        )
 
 
 # Sets up an Activity table, this references "attendees" via the person_activities table
@@ -29,7 +29,7 @@ class Activity(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, unique=True, nullable=False)
     attendees = relationship("Person",
-                             secondary=person_activities,
+                             secondary=person_activity,
                              back_populates="activities")
 
     # Gives a representation of an Activity (for printing out)
@@ -44,7 +44,7 @@ class Person(Base):
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     activities = relationship("Activity",
-                              secondary=person_activities,
+                              secondary=person_activity,
                               back_populates="attendees")
 
     # Gives a representation of a Person (for printing out)

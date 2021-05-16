@@ -42,5 +42,5 @@ class TestCliApplication(TestDbInteractions):
         self.assertEqual(str(activity_attendees),
                          '1 Add new attendee\n2 Select new activity\n3 Return to main menu')
         self.assertDictEqual(activity_attendees.data,
-                             {'data_title': 'Attendees', 'data_list': ["Elyse O'Connor", 'Ronald McDonald'],
+                             {'data_title': 'Attendees', 'data_list': ["Elyse O'Connor"],
                               'activity_id': 3})
