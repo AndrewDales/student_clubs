@@ -2,6 +2,7 @@
 from contextlib import contextmanager
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
+from sqlalchemy.exc import IntegrityError
 from tk_sql_app.settings import SQL_PATH
 from tk_sql_app import cli
 from tk_sql_app.db import queries
@@ -166,6 +167,10 @@ class CliApplication:
             person_id = menu.data["ref_data"][option][0]
 
         with self.session_scope() as session:
-            queries.add_person_activity(session, person_id, activity_id)
+            try:
+                queries.add_person_activity(session, person_id, activity_id)
+            except IntegrityError:
+                print("That person is already attending that activity")
+
 
         next_menu_callback(person_id=person_id, activity_id=activity_id)

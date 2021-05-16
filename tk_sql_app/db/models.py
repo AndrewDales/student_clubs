@@ -9,6 +9,7 @@ from sqlalchemy import (
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql.util import unwrap_order_by
 
 Base = declarative_base()
 
@@ -30,6 +31,7 @@ class Activity(Base):
     name = Column(String, unique=True, nullable=False)
     attendees = relationship("Person",
                              secondary=person_activity,
+                             order_by='(Person.last_name, Person.first_name)',
                              back_populates="activities")
 
     # Gives a representation of an Activity (for printing out)
@@ -45,6 +47,7 @@ class Person(Base):
     last_name = Column(String, nullable=False)
     activities = relationship("Activity",
                               secondary=person_activity,
+                              order_by='Activity.name',
                               back_populates="attendees")
 
     # Gives a representation of a Person (for printing out)

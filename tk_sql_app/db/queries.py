@@ -35,7 +35,8 @@ def qry_person_activities(session, id_num):
 def qry_activities_register(session, id_num):
     activity = session.query(m.Activity).get(id_num)
     return {"activity": activity.name, "id": id_num,
-            "attendees": [f"{attendee.first_name} {attendee.last_name}" for attendee in activity.attendees]}
+            "attendees": [f"{attendee.first_name} {attendee.last_name}"
+                          for attendee in activity.attendees]}
 
 
 # Add a person_id, activity_id relationship to the person_activities table
