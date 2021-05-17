@@ -4,7 +4,7 @@
 
 from sqlalchemy import (
     Column, ForeignKey, ForeignKeyConstraint, Table, UniqueConstraint, event,
-    Boolean, Date, Integer, Text, String, Unicode
+    Boolean, Date, Integer, Text, String
 )
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.declarative import declarative_base

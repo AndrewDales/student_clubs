@@ -23,7 +23,7 @@ class MenuOption:
 
 
 class CliApplication:
-    def __init__(self, **kwargs):
+    def __init__(self, interface=None, display=None, **kwargs):
         engine = create_engine(SQL_PATH, echo=kwargs.get("echo", True))
         self.Session = sessionmaker(bind=engine)
         self.callbacks = {
@@ -34,8 +34,8 @@ class CliApplication:
             'open_select_activity': self.open_select_activity,
             'add_person_activity': self.add_person_activity
         }
-        self.interface = kwargs.get("interface", None)
-        self.display = kwargs.get("display", True)
+        self.interface = interface
+        self.display = display
         self.menus = {}
 
     @contextmanager
