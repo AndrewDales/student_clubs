@@ -24,13 +24,14 @@ class BaseWindow(tk.Tk):
         title_label.pack()
 
         # Initialise frames to an empty dictionary
-        self.frames = {}
+        self.frames = []
 
     # Method to show the desired game class, which is a subclass of tk.Frame
     def show_frame(self, current_frame):
-        for frame in self.frames.values():
+        for frame in self.frames:
             frame.pack_forget()
-        self.frames[current_frame].pack(fill=tk.X)
+        self.frames.append(current_frame)
+        current_frame.pack(fill=tk.X)
 
 
 class MainMenu(tk.Frame):
@@ -45,6 +46,30 @@ class MainMenu(tk.Frame):
 
         self.grid_columnconfigure(0, weight=1)
 
-        self.title_label.grid(row=0, column=0, pady=5)
+        self.title_label.grid(row=0, column=0, pady=7)
         for i, btn in enumerate(self.selection_buttons, 1):
-            btn.grid(row=i, column=0, pady=(0, 5))
+            btn.grid(row=i, column=0, pady=(0, 7))
+
+
+class SelectMenu(tk.Frame):
+    def __init__(self, menu_data, parent, **kwargs):
+        super().__init__(parent, **kwargs)
+        self.menu_options = menu_data["menu_options"]["option_list"]
+        self.title_label = ttk.Label(self, text=menu_data["title"], font=("Arial", 12))
+        lb_choices = tk.StringVar(value=
+                                  [item.display for item in self.menu_options])
+        self.option_listbox = tk.Listbox(self, listvariable=lb_choices, height=10)
+        self.option_listbox.bind('<<ListboxSelect>>', self.lb_select)
+
+        self.grid_columnconfigure(0, weight=1)
+
+        self.title_label.grid(row=0, column=0, pady=7)
+        self.option_listbox.grid(row=1, column=0, pady=(0,7))
+
+    def lb_select(self, event):
+        idx = self.option_listbox.curselection()
+        idx = int(idx[0])
+        print(self.menu_options[idx].callback)
+        self.menu_options[idx].execute_option()
+        print(idx)
+
