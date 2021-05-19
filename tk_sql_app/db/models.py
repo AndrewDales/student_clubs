@@ -23,12 +23,14 @@ person_activities = Table('person_activities',
 
 
 # Sets up an Activity table, this references "attendees" via the person_activities table
+# Sets up an Activity table, this references "attendees" via the person_activities table
 class Activity(Base):
     __tablename__ = 'activity'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, unique=True, nullable=False)
     attendees = relationship("Person",
                              secondary=person_activities,
+                             order_by='(Person.last_name, Person.first_name)',
                              back_populates="activities")
 
     # Gives a representation of an Activity (for printing out)
@@ -39,11 +41,12 @@ class Activity(Base):
 # Sets up a Person table, this references "activities" via the person_activities table
 class Person(Base):
     __tablename__ = 'person'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     activities = relationship("Activity",
                               secondary=person_activities,
+                              order_by='Activity.name',
                               back_populates="attendees")
 
     # Gives a representation of a Person (for printing out)

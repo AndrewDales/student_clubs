@@ -20,7 +20,8 @@ def qry_names(session):
 
 # Query all the activities in the database
 def qry_activities(session):
-    pass
+    qry = session.query(m.Activity).order_by(m.Activity.name)
+    return [(row.id, row.name) for row in qry.all()]
 
 
 # Query the activities of a given person
@@ -32,4 +33,7 @@ def qry_person_activities(session, id_num):
 
 # Query the activities of a given person
 def qry_activities_register(session, id_num):
-    pass
+    activity = session.query(m.Activity).get(id_num)
+    return {"activity": activity.name, "id": id_num,
+            "attendees": [f"{attendee.first_name} {attendee.last_name}"
+                          for attendee in activity.attendees]}
