@@ -14,8 +14,9 @@ from tk_sql_app.cli.menus import Menu
 class TestCliApplication(TestDbInteractions):
     def setUp(self):
         super().setUp()
-        self.test_app = CliApplication(echo=False, interface="cli", display=None)
+        self.test_app = CliApplication(echo=False, interface="cli", display=None, engine=self.engine)
         self.main_menu = self.test_app.open_main_menu()
+        self.callbacks["quit"] = self.quit
 
     def test_main_menu(self):
         self.assertTrue(isinstance(self.main_menu, Menu), "main menu is not a menu type")
@@ -44,3 +45,11 @@ class TestCliApplication(TestDbInteractions):
         self.assertDictEqual(activity_attendees.data,
                              {'data_title': 'Attendees', 'data_list': ["Elyse O'Connor"],
                               'activity_id': 3})
+
+    def test_add_person_activity(self):
+        self.test_app.callbacks["add_person_activity"](3, 2, None)
+        person_activities = self.test_app.callbacks["open_person_menu"](3)
+        self.assertDictEqual(person_activities.data,
+                             {'data_title': 'Activities',
+                              'data_list': ['Boardgames', 'Lower School Politics', 'Rap Group'],
+                              'person_id': 3})

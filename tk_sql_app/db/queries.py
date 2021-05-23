@@ -13,15 +13,17 @@ def create_person(name, last_name=None):
 
 
 # Query all the persons in the database
-def qry_names(session):
+def qry_names(session, exclude_activity=None):
     qry = session.query(m.Person).order_by(m.Person.last_name, m.Person.first_name)
-    return [(row.id, f'{row.first_name} {row.last_name}') for row in qry.all()]
+    return [(row.id, f'{row.first_name} {row.last_name}') for row in qry.all()
+            if exclude_activity not in [person.id for person in row.activities]]
 
 
-# Query all the activities in the database
-def qry_activities(session):
+# Query all the activities in the database - (opt) exclude any activities done by exclude_person
+def qry_activities(session, exclude_person=None):
     qry = session.query(m.Activity).order_by(m.Activity.name)
-    return [(row.id, row.name) for row in qry.all()]
+    return [(row.id, row.name) for row in qry.all()
+            if exclude_person not in [att.id for att in row.attendees]]
 
 
 # Query the activities of a given person

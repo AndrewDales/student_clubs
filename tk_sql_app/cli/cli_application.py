@@ -24,15 +24,16 @@ class MenuOption:
 
 class CliApplication:
     def __init__(self, interface=None, display=None, **kwargs):
-        engine = create_engine(SQL_PATH, echo=kwargs.get("echo", True))
-        self.Session = sessionmaker(bind=engine)
+        self.engine = kwargs.get("engine", create_engine(SQL_PATH, echo=kwargs.get("echo", True)))
+        self.Session = sessionmaker(bind=self.engine)
         self.callbacks = {
             'open_main_menu': self.open_main_menu,
             'open_person_menu': self.open_person_menu,
             'open_activity_menu': self.open_activity_menu,
             'open_select_person': self.open_select_person,
             'open_select_activity': self.open_select_activity,
-            'add_person_activity': self.add_person_activity
+            'add_person_activity': self.add_person_activity,
+            'quit': None
         }
         self.interface = interface
         self.display = display
@@ -66,7 +67,7 @@ class CliApplication:
                                        {"next_menu_callback": self.callbacks["open_person_menu"]}),
                             MenuOption("Select activity", self.callbacks["open_select_activity"],
                                        {"next_menu_callback": self.callbacks["open_activity_menu"]}),
-                            MenuOption("Quit", None)]}
+                            MenuOption("Quit", self.callbacks["quit"])]}
 
         menu = {"title": title, "menu_options": menu_options}
         if self.interface == "cli":
@@ -75,9 +76,10 @@ class CliApplication:
 
     def open_select_person(self, next_menu_callback=None, **kwargs):
         callback = next_menu_callback
+        activity_id = kwargs.get("activity_id", None)
 
         with self.session_scope() as session:
-            name_data = queries.qry_names(session)
+            name_data = queries.qry_names(session, exclude_activity=activity_id)
 
         title = "Select Person"
         menu_options = {"option_title": "Select one of the following people",
@@ -91,9 +93,10 @@ class CliApplication:
 
     def open_select_activity(self, next_menu_callback=None, **kwargs):
         callback = next_menu_callback
+        person_id = kwargs.get("person_id", None)
 
         with self.session_scope() as session:
-            activity_data = queries.qry_activities(session)
+            activity_data = queries.qry_activities(session, exclude_person=person_id)
 
         title = "Select Activity"
         menu_options = {"option_title": "Select one of the following activities",
@@ -116,9 +119,10 @@ class CliApplication:
                 "person_id": id_num}
         menu_options = dict(option_title="Select from the following options",
                             option_list=[MenuOption("Add new activity",
-                                                    self.callbacks["add_person_activity"],
-                                                    {"next_menu_callback": self.callbacks["open_person_menu"],
-                                                     "person_id": id_num}),
+                                                    self.callbacks["open_select_activity"],
+                                                    {"next_menu_callback": self.callbacks["add_person_activity"],
+                                                     "person_id": id_num,
+                                                     "return_callback": self.callbacks["open_person_menu"]}),
                                          MenuOption("Select new person",
                                                     self.callbacks["open_select_person"],
                                                     {"next_menu_callback": self.callbacks["open_person_menu"]}),
@@ -141,9 +145,10 @@ class CliApplication:
                 "activity_id": id_num}
         menu_options = dict(option_title="Select from the following options",
                             option_list=[MenuOption("Add new attendee",
-                                                    self.callbacks["add_person_activity"],
-                                                    {"next_menu_callback": self.callbacks["open_activity_menu"],
-                                                     "activity_id": id_num}),
+                                                    self.callbacks["open_select_person"],
+                                                    {"next_menu_callback": self.callbacks["add_person_activity"],
+                                                     "activity_id": id_num,
+                                                     "return_callback": self.callbacks["open_activity_menu"]}),
                                          MenuOption("Select new activity",
                                                     self.callbacks["open_select_activity"],
                                                     {"next_menu_callback": self.callbacks["open_activity_menu"]}),
@@ -155,22 +160,13 @@ class CliApplication:
             menu = self.create_cli_menu("activity_register_menu", menu)
         return menu
 
-    def add_person_activity(self, person_id=None, activity_id=None, next_menu_callback=None):
-        if not activity_id:
-            menu = self.callbacks["open_select_activity"]()
-            option = menu.last_selected
-            activity_id = menu.data["ref_data"][option][0]
-
-        if not person_id:
-            menu = self.callbacks["open_select_person"]()
-            option = menu.last_selected
-            person_id = menu.data["ref_data"][option][0]
-
+    def add_person_activity(self, person_id=None, activity_id=None, return_callback=None):
         with self.session_scope() as session:
             try:
                 queries.add_person_activity(session, person_id, activity_id)
             except IntegrityError:
                 print("That person is already attending that activity")
 
-
-        next_menu_callback(person_id=person_id, activity_id=activity_id)
+        if return_callback:
+            menu = return_callback(person_id=person_id, activity_id=activity_id)
+            return menu
