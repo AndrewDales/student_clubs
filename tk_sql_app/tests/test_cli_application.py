@@ -16,7 +16,6 @@ class TestCliApplication(TestDbInteractions):
         super().setUp()
         self.test_app = CliApplication(echo=False, interface="cli", display=None, engine=self.engine)
         self.main_menu = self.test_app.open_main_menu()
-        self.callbacks["quit"] = self.quit
 
     def test_main_menu(self):
         self.assertTrue(isinstance(self.main_menu, Menu), "main menu is not a menu type")
