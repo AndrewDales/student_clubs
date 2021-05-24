@@ -33,7 +33,7 @@ class CliApplication:
             'open_select_person': self.open_select_person,
             'open_select_activity': self.open_select_activity,
             'add_person_activity': self.add_person_activity,
-            'quit': None
+            'quit': self.quit
         }
         self.interface = interface
         self.display = display
@@ -170,3 +170,6 @@ class CliApplication:
         if return_callback:
             menu = return_callback(person_id=person_id, activity_id=activity_id)
             return menu
+
+    def quit(self):
+        print("Goodbye!")

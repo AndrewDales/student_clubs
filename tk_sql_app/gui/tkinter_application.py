@@ -13,7 +13,6 @@ class TkApplication(CliApplication):
         if not display:
             self.root.withdraw()
         self.main_menu = self.open_main_menu()
-        # TODO fix the quit button for the GUI.
 
     def open_main_menu(self):
         menu = super().open_main_menu()
@@ -44,3 +43,6 @@ class TkApplication(CliApplication):
         activity_frame = DisplayMenu(menu, parent=self.root)
         self.root.show_frame(activity_frame)
         return activity_frame
+
+    def quit(self):
+        self.root.destroy()
