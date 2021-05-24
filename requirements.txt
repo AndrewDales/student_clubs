@@ -1,2 +1,2 @@
-SQLAlchemy~=1.4.7
-pip~=21.0.1
+SQLAlchemy~=1.4.14
+PyInputPlus~=0.2.12

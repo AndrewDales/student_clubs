@@ -1,6 +1,6 @@
 """ Module contains unittests for the db classes and functions"""
 
-# tk_sql_app/tests/__init__
+# tk_sql_app/tests/test_db
 
 import unittest
 
@@ -13,8 +13,7 @@ from tk_sql_app.db.queries import create_person
 
 
 class TestDbInteractions(unittest.TestCase):
-    def setUp(self):
-        # The test database is setup in directly in a "memory" location
+    def setUp(self) -> None:
         self.engine = create_engine('sqlite:///:memory:', echo=False)
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
@@ -57,7 +56,7 @@ class TestDbInteractions(unittest.TestCase):
         self.session.add_all(participants + activities)
         self.session.commit()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         # m.Base.meta.drop_all(self.engine)
         self.session.close()
 
@@ -71,19 +70,20 @@ class TestDbInteractions(unittest.TestCase):
         activity_data = db.queries.qry_activities_register(self.session, 4)
         self.assertDictEqual(activity_data, {'activity': 'Boardgames',
                                              'id': 4,
-                                             'names': ['Dominique Peters', 'Adrian Pearce']})
+                                             'attendees': ['Adrian Pearce', 'Dominique Peters']})
 
     def test_qry_names(self):
         names_data = db.queries.qry_names(self.session)
-        for item in {6: 'Joey Evans', 1: "Elyse O'Connor", 3: 'Adrian Pearce',
-                     2: 'Dominique Peters', 4: 'Tristan Rees', 5: 'Aiden Richards',
-                     7: 'Dennis Thomson'}:
+        for item in [(6, 'Joey Evans'),
+                     (1, "Elyse O'Connor"), (3, 'Adrian Pearce'),
+                     (2, 'Dominique Peters'), (4, 'Tristan Rees'),
+                     (5, 'Aiden Richards'), (7, 'Dennis Thomson')]:
             self.assertIn(item, names_data)
 
     def test_qry_activities(self):
         activities_data = db.queries.qry_activities(self.session)
-        self.assertEqual(activities_data, {4: 'Boardgames', 8: 'Classics Society',
-                                           5: 'Lower School Politics',
-                                           1: 'Masaryk Society', 6: 'Mindfulness',
-                                           7: 'Origami', 3: 'Pride Society',
-                                           2: 'Rap Group', 9: 'VEX Robotics'})
+        self.assertEqual(activities_data, [(4, 'Boardgames'), (8, 'Classics Society'),
+                                           (5, 'Lower School Politics'), (1, 'Masaryk Society'),
+                                           (6, 'Mindfulness'), (7, 'Origami'),
+                                           (3, 'Pride Society'), (2, 'Rap Group'),
+                                           (9, 'VEX Robotics')])
