@@ -7,3 +7,5 @@ Repository is a template structure for building a tkinter app using a connection
 - Version 1.1 - Starting to build the database application
 
 - Version 1.2 - CLI and GUI interfaces now available
+
+Start the application by running start_app.py. To change from GUI mode to CLI mode change the interface variable in start_app.py to "cli"
