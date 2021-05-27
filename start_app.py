@@ -1,4 +1,4 @@
-""" Launching point for cli or TKinter applications """
+""" Launching point for cli or Tkinter applications """
 from tk_sql_app.cli.cli_application import CliApplication
 from tk_sql_app.gui.tkinter_application import TkApplication
 
