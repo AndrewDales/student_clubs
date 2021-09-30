@@ -4,7 +4,7 @@
 
 from sqlalchemy import (
     Column, ForeignKey, ForeignKeyConstraint, Table, UniqueConstraint, event,
-    Boolean, Date, Integer, Text, String
+    Boolean, Date, Integer, Text, String, func
 )
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -13,15 +13,19 @@ from sqlalchemy.sql.util import unwrap_order_by
 
 Base = declarative_base()
 
+
 # Sets up a link table with activity_id and person_id as foreign keys
 # Base.metadata is a container object that keeps together many different features of the database
-person_activity = Table('person_activity',
-                        Base.metadata,
-                        Column('id', Integer, primary_key=True),
-                        Column('activity_id', ForeignKey('activity.id')),
-                        Column('person_id', ForeignKey('person.id')),
-                        UniqueConstraint('activity_id', 'person_id')
-                        )
+class Registration(Base):
+    __tablename__ = 'person_activity'
+    id = Column('id', Integer, primary_key=True)
+    activity_id = Column('activity_id', ForeignKey('activity.id'))
+    person_id = Column('person_id', ForeignKey('person.id'))
+    registration_date = Column(Date(), server_default=func.now())
+    UniqueConstraint('activity_id', 'person_id', 'registration_date')
+
+    def __repr__(self):
+        return f"<Registration({self.id} Date: {self.registration_date})>"
 
 
 # Sets up an Activity table, this references "attendees" via the person_activities table
@@ -30,7 +34,7 @@ class Activity(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, unique=True, nullable=False)
     attendees = relationship("Person",
-                             secondary=person_activity,
+                             secondary='person_activity',
                              order_by='(Person.last_name, Person.first_name)',
                              back_populates="activities")
 
@@ -46,7 +50,7 @@ class Person(Base):
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     activities = relationship("Activity",
-                              secondary=person_activity,
+                              secondary='person_activity',
                               order_by='Activity.name',
                               back_populates="attendees")
 
