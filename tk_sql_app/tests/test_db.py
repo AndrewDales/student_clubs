@@ -57,7 +57,7 @@ class TestDbInteractions(unittest.TestCase):
         self.session.commit()
 
     def tearDown(self) -> None:
-        # m.Base.meta.drop_all(self.engine)
+        m.Base.metadata.drop_all(self.engine)
         self.session.close()
 
     def test_qry_person_activities(self):

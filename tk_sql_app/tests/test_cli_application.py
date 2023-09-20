@@ -52,3 +52,4 @@ class TestCliApplication(TestDbInteractions):
                              {'data_title': 'Activities',
                               'data_list': ['Boardgames', 'Lower School Politics', 'Rap Group'],
                               'person_id': 3})
+

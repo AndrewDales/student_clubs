@@ -1,2 +1,3 @@
-SQLAlchemy~=1.4.14
+SQLAlchemy~=2.0.21
 PyInputPlus~=0.2.12              # Used to ensure a fixed type or range of input
+pytest~=7.4.2
